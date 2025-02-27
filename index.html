@@ -73,13 +73,12 @@
         <div id="score">Score: 0</div>
         <div id="launch-screen">
             <button onclick="showDifficultySelection()">Choose Difficulty</button>
-            <button onclick="startNewGame()">New Game</button>
         </div>
         <div id="difficulty-selection">
             <p>Select Difficulty:</p>
-            <button onclick="setDifficulty('easy')">Easy</button>
-            <button onclick="setDifficulty('medium')">Medium</button>
-            <button onclick="setDifficulty('hard')">Hard</button>
+            <button onclick="startGame('easy')">Easy</button>
+            <button onclick="startGame('medium')">Medium</button>
+            <button onclick="startGame('hard')">Hard</button>
         </div>
     </div>
     <script>
@@ -92,7 +91,6 @@
         let basketPosition = gameContainer.offsetWidth / 2;
         let fallingSpeed = 5;
         let objectInterval = 1000;
-        let selectedDifficulty = 'medium';
 
         document.addEventListener('keydown', (event) => {
             if (event.key === 'ArrowLeft') {
@@ -108,15 +106,9 @@
             difficultySelection.style.display = 'block';
         }
 
-        function setDifficulty(difficulty) {
-            selectedDifficulty = difficulty;
+        function startGame(difficulty) {
             difficultySelection.style.display = 'none';
-            launchScreen.style.display = 'block';
-        }
-
-        function startNewGame() {
-            launchScreen.style.display = 'none';
-            switch (selectedDifficulty) {
+            switch (difficulty) {
                 case 'easy':
                     fallingSpeed = 3;
                     objectInterval = 1500;
