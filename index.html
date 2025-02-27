@@ -48,7 +48,7 @@
             background-color: green;
         }
 
-        #difficulty-selection {
+        #launch-screen, #difficulty-selection {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -57,9 +57,10 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: none;
         }
 
-        #difficulty-selection button {
+        #launch-screen button, #difficulty-selection button {
             margin: 5px;
             padding: 10px 20px;
             font-size: 16px;
@@ -70,22 +71,28 @@
     <div id="game-container">
         <div id="basket"></div>
         <div id="score">Score: 0</div>
+        <div id="launch-screen">
+            <button onclick="showDifficultySelection()">Choose Difficulty</button>
+            <button onclick="startNewGame()">New Game</button>
+        </div>
         <div id="difficulty-selection">
             <p>Select Difficulty:</p>
-            <button onclick="startGame('easy')">Easy</button>
-            <button onclick="startGame('medium')">Medium</button>
-            <button onclick="startGame('hard')">Hard</button>
+            <button onclick="setDifficulty('easy')">Easy</button>
+            <button onclick="setDifficulty('medium')">Medium</button>
+            <button onclick="setDifficulty('hard')">Hard</button>
         </div>
     </div>
     <script>
         const gameContainer = document.getElementById('game-container');
         const basket = document.getElementById('basket');
         const scoreDisplay = document.getElementById('score');
+        const launchScreen = document.getElementById('launch-screen');
         const difficultySelection = document.getElementById('difficulty-selection');
         let score = 0;
         let basketPosition = gameContainer.offsetWidth / 2;
         let fallingSpeed = 5;
         let objectInterval = 1000;
+        let selectedDifficulty = 'medium';
 
         document.addEventListener('keydown', (event) => {
             if (event.key === 'ArrowLeft') {
@@ -96,9 +103,20 @@
             basket.style.left = `${basketPosition}px`;
         });
 
-        function startGame(difficulty) {
+        function showDifficultySelection() {
+            launchScreen.style.display = 'none';
+            difficultySelection.style.display = 'block';
+        }
+
+        function setDifficulty(difficulty) {
+            selectedDifficulty = difficulty;
             difficultySelection.style.display = 'none';
-            switch (difficulty) {
+            launchScreen.style.display = 'block';
+        }
+
+        function startNewGame() {
+            launchScreen.style.display = 'none';
+            switch (selectedDifficulty) {
                 case 'easy':
                     fallingSpeed = 3;
                     objectInterval = 1500;
@@ -139,6 +157,9 @@
                 }
             }, 50);
         }
+
+        // Show the launch screen initially
+        launchScreen.style.display = 'block';
     </script>
 </body>
 </html>
