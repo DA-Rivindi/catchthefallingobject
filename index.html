@@ -8,176 +8,50 @@
         body {
             margin: 0;
             overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to bottom, #a8edea, #fed6e3);
         }
-
-        #game-container {
+        #gameArea {
             position: relative;
             width: 100vw;
             height: 100vh;
-            overflow: hidden;
+            background-color: #f0f0f0;
         }
-
         #basket {
             position: absolute;
             bottom: 10px;
-            left: 50%;
             width: 100px;
             height: 20px;
             background-color: #333;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transform: translateX(-50%);
-        }
-
-        #score {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 24px;
-            color: #fff;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-        }
-
-        .falling-object {
-            position: absolute;
-            top: 0;
-            width: 20px;
-            height: 20px;
-            background-color: red;
-            border-radius: 50%;
-            animation: rotate 2s linear infinite;
-        }
-
-        .caught {
-            background-color: green;
-            animation: none;
-        }
-
-        #launch-screen, #difficulty-selection {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-            display: none;
-        }
-
-        #launch-screen button, #difficulty-selection button {
-            margin: 5px;
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            background-color: #ff6f61;
-            color: #fff;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        #launch-screen button:hover, #difficulty-selection button:hover {
-            background-color: #ff3b2f;
-        }
-
-        @keyframes rotate {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
         }
     </style>
 </head>
 <body>
-    <div id="game-container">
+    <div id="gameArea">
         <div id="basket"></div>
-        <div id="score">Score: 0</div>
-        <div id="launch-screen">
-            <button onclick="showDifficultySelection()">Choose Difficulty</button>
-        </div>
-        <div id="difficulty-selection">
-            <p>Select Difficulty:</p>
-            <button onclick="startGame('easy')">Easy</button>
-            <button onclick="startGame('medium')">Medium</button>
-            <button onclick="startGame('hard')">Hard</button>
-        </div>
     </div>
     <script>
-        const gameContainer = document.getElementById('game-container');
         const basket = document.getElementById('basket');
-        const scoreDisplay = document.getElementById('score');
-        const launchScreen = document.getElementById('launch-screen');
-        const difficultySelection = document.getElementById('difficulty-selection');
-        let score = 0;
-        let basketPosition = gameContainer.offsetWidth / 2;
-        let fallingSpeed = 5;
-        let objectInterval = 1000;
+        const gameArea = document.getElementById('gameArea');
+        let basketPosition = gameArea.offsetWidth / 2 - basket.offsetWidth / 2;
+        const basketSpeed = 10;
 
-        document.addEventListener('keydown', (event) => {
+        function moveBasket(event) {
             if (event.key === 'ArrowLeft') {
-                basketPosition -= 20;
+                basketPosition -= basketSpeed;
             } else if (event.key === 'ArrowRight') {
-                basketPosition += 20;
+                basketPosition += basketSpeed;
             }
-            basket.style.left = `${basketPosition}px`;
-        });
 
-        function showDifficultySelection() {
-            launchScreen.style.display = 'none';
-            difficultySelection.style.display = 'block';
-        }
-
-        function startGame(difficulty) {
-            difficultySelection.style.display = 'none';
-            switch (difficulty) {
-                case 'easy':
-                    fallingSpeed = 3;
-                    objectInterval = 1500;
-                    break;
-                case 'medium':
-                    fallingSpeed = 5;
-                    objectInterval = 1000;
-                    break;
-                case 'hard':
-                    fallingSpeed = 7;
-                    objectInterval = 700;
-                    break;
+            // Wrap around logic
+            if (basketPosition < -basket.offsetWidth) {
+                basketPosition = gameArea.offsetWidth;
+            } else if (basketPosition > gameArea.offsetWidth) {
+                basketPosition = -basket.offsetWidth;
             }
-            setInterval(createFallingObject, objectInterval);
+
+            basket.style.left = basketPosition + 'px';
         }
 
-        function createFallingObject() {
-            const object = document.createElement('div');
-            object.classList.add('falling-object');
-            object.style.left = `${Math.random() * (gameContainer.offsetWidth - 20)}px`;
-            gameContainer.appendChild(object);
-
-            let fallingInterval = setInterval(() => {
-                const objectTop = parseInt(window.getComputedStyle(object).getPropertyValue('top'));
-                if (objectTop >= gameContainer.offsetHeight - 30) {
-                    clearInterval(fallingInterval);
-                    if (Math.abs(basketPosition - parseInt(object.style.left)) < 50) {
-                        object.classList.add('caught');
-                        score++;
-                        scoreDisplay.textContent = `Score: ${score}`;
-                        setTimeout(() => gameContainer.removeChild(object), 200);
-                    } else {
-                        alert('Game Over! Final Score: ' + score);
-                        window.location.reload();
-                    }
-                } else {
-                    object.style.top = `${objectTop + fallingSpeed}px`;
-                }
-            }, 50);
-        }
-
-        // Show the launch screen initially
-        launchScreen.style.display = 'block';
+        document.addEventListener('keydown', moveBasket);
     </script>
 </body>
 </html>
