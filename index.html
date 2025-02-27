@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catch the Falling Objects</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+
+        #basket {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            width: 100px;
+            height: 20px;
+            background-color: #333;
+            transform: translateX(-50%);
+        }
+
+        #score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+        }
+
+        .falling-object {
+            position: absolute;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="basket"></div>
+        <div id="score">Score: 0</div>
+    </div>
+    <script>
+        const gameContainer = document.getElementById('game-container');
+        const basket = document.getElementById('basket');
+        const scoreDisplay = document.getElementById('score');
+        let score = 0;
+        let basketPosition = gameContainer.offsetWidth / 2;
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowLeft') {
+                basketPosition -= 20;
+            } else if (event.key === 'ArrowRight') {
+                basketPosition += 20;
+            }
+            basket.style.left = `${basketPosition}px`;
+        });
+
+        function createFallingObject() {
+            const object = document.createElement('div');
+            object.classList.add('falling-object');
+            object.style.left = `${Math.random() * (gameContainer.offsetWidth - 20)}px`;
+            gameContainer.appendChild(object);
+
+            let fallingInterval = setInterval(() => {
+                const objectTop = parseInt(window.getComputedStyle(object).getPropertyValue('top'));
+                if (objectTop >= gameContainer.offsetHeight - 30) {
+                    clearInterval(fallingInterval);
+                    gameContainer.removeChild(object);
+                    if (Math.abs(basketPosition - parseInt(object.style.left)) < 50) {
+                        score++;
+                        scoreDisplay.textContent = `Score: ${score}`;
+                    } else {
+                        alert('Game Over! Final Score: ' + score);
+                        window.location.reload();
+                    }
+                } else {
+                    object.style.top = `${objectTop + 5}px`;
+                }
+            }, 50);
+        }
+
+        setInterval(createFallingObject, 1000);
+    </script>
+</body>
+</html>
