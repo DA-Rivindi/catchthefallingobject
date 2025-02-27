@@ -9,6 +9,9 @@
 - Catch the falling objects to increase your score.
 - The game ends if an object reaches the bottom without being caught.
 
+## To play the game live, follow the below link:
+https://da-rivindi.github.io/catchthefallingobject/
+
 ## Features
 
 - Interactive gameplay with keyboard controls.
